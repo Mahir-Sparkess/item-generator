@@ -163,10 +163,18 @@ class FacetExtractor(BaseExtractor):
 
         processor_output = self.run_processors(filepath, description, source_media, **kwargs)
 
+        properties = processor_output.get('properties', {})
+        if templates := processor_output.get('templates', {}):
+            if title := templates.get('title_template'):
+                properties['title'] = title
+            if desc := templates.get('description_template'):
+                properties['description'] = desc
+
+        print(processor_output)
         # Generate item id
         item_id = item_utils.generate_item_id_from_properties(
             filepath,
-            processor_output.get('properties', {}),
+            properties,
             description
         )
 
